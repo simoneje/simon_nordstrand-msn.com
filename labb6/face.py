@@ -4,7 +4,7 @@ import numpy as np
 import time
 from PIL import Image
 
-def data_collect():
+def dataGathering():
     face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_default.xml')
     cap = cv2.VideoCapture(0)
     cap.set(3, 640)
@@ -16,12 +16,12 @@ def data_collect():
             user_id = str(len(user_ids)+1)
     except:
         user_id = '1'
-    print(f'\n\n\t\tUser ID: {user_id}')
-    face_id = input('\n\t\tPlease enter the name of the user: ')
-    print('\n\n\t\tInitializing camera..')
+    print(f'User ID: {user_id}')
+    face_id = input('Please enter the name of the user: ')
+    print('Initializing camera..')
     count = 0
     while True:
-        ret, img = cap.read()
+        img = cap.read()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
         for (x, y, w, h) in faces:
@@ -34,37 +34,7 @@ def data_collect():
             break
         elif count >= 30:
             break
-    face_ids = []
     user_ids = []
-
-    # try:
-    #     with open(f'./users/user_ids.csv.txt', 'r', encoding='utf-8') as file:
-    #         # read_ids = file.read().splitlines()
-    #         # for line in read_ids:
-    #         #     user_ids.append(line.rstrip())
-    #         user_ids = file.read().splitlines()
-    #         user_ids.append(user_id)
-    #     with open(f'./users/face_ids.csv.txt', 'r', encoding='utf-8') as file:
-    #         # read_ids = file.read().splitlines()
-    #         # for line in read_ids:
-    #         #     face_ids.append(line.rstrip())
-    #         face_ids = file.read().splitlines()
-    #         face_ids.append(face_id)
-    #     with open(f'./users/user_ids.csv.txt', 'w', encoding='utf-8') as file:
-    #         for line in user_ids:
-    #             file.write(line + '\n')
-    #     with open(f'./users/face_ids.csv.txt', 'w', encoding='utf-8') as file:
-    #         for line in face_ids:
-    #             file.write(line + '\n')
-    # except:
-    #     user_ids.append(user_id)
-    #     face_ids.append(face_id)
-    #     with open(f'./users/user_ids.csv.txt', 'w', encoding='utf-8') as file:
-    #         for line in user_ids:
-    #             file.write(line + '\n')
-    #     with open(f'./users/face_ids.csv.txt', 'w', encoding='utf-8') as file:
-    #         for line in face_ids:
-    #             file.write(line + '\n')
     cap.release()
     cv2.destroyAllWindows()
 
@@ -73,11 +43,11 @@ def trainer():
     save_path = './trainer'
     face_read = cv2.face.LBPHFaceRecognizer_create()
     face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_default.xml')
-    print('\n\n\t\tTraining faces from dataset...')
+    print('Training faces from dataset...')
     faces, ids = get_img_lbl(path, face_cascade)
     face_read.train(faces, np.array(ids))
     face_read.write(f'{save_path}/trainer.yml')
-    print(f'\n\t\t{len(np.unique(ids))} faces trained. Exiting trainer..')
+    print(f'{len(np.unique(ids))} faces trained. Exiting trainer..')
     time.sleep(2)
     
 def get_img_lbl(path, face_cascade):
@@ -94,7 +64,7 @@ def get_img_lbl(path, face_cascade):
             ids.append(user_id)
     return face_samples, ids
 
-def face_detect():
+def faceDetect():
     face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_default.xml')
     cap = cv2.VideoCapture(0)
     cap.set(3, 640)
@@ -115,7 +85,7 @@ def face_detect():
     cap.release()
     cv2.destroyAllWindows()
 
-def face_reco():
+def faceReco():
     face_read = cv2.face.LBPHFaceRecognizer_create()
     face_read.read('./trainer/trainer.yml')
     face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_default.xml')
@@ -133,7 +103,7 @@ def face_reco():
             for line in read_users:
                 face_ids.append(line.rstrip())
     except:
-        print('\n\n\t\tNo users registered')
+        print('No users registered')
     cap = cv2.VideoCapture(0)
     cap.set(3, 640)
     cap.set(4, 480)
@@ -165,7 +135,7 @@ def face_reco():
         end = cv2.waitKey(10) & 0xff
         if end == 27:
             break
-    print('\n\n\t\tExiting datacapture..')
+    print('Exiting datacapture')
     time.sleep(2)
     cap.release()
     cv2.destroyAllWindows()
